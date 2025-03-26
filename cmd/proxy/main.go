@@ -174,6 +174,11 @@ VERSION:
 		Name:  "sovereign",
 		Usage: "If set to true, will use sovereign run type components",
 	}
+	addressHrp = cli.StringFlag{
+		Name:  "address-hrp",
+		Usage: "human-readable address HRP",
+		Value: addressHRP,
+	}
 
 	testServer *testing.TestHttpServer
 )
@@ -200,6 +205,7 @@ func main() {
 		startSwaggerUI,
 		noStatusCheck,
 		sovereign,
+		addressHrp,
 	}
 	app.Authors = []cli.Author{
 		{
@@ -393,6 +399,7 @@ func createVersionsRegistryTestOrProduction(
 			ctx.GlobalBool(sovereign.Name),
 			closableComponents,
 			skipStatusCheck,
+			ctx.GlobalString(addressHrp.Name),
 		)
 	}
 
@@ -405,6 +412,7 @@ func createVersionsRegistryTestOrProduction(
 		ctx.GlobalBool(sovereign.Name),
 		closableComponents,
 		skipStatusCheck,
+		ctx.GlobalString(addressHrp.Name),
 	)
 }
 
@@ -417,8 +425,9 @@ func createVersionsRegistry(
 	isSovereignConfig bool,
 	closableComponents *data.ClosableComponentsHandler,
 	skipStatusCheck bool,
+	addressHrp string,
 ) (data.VersionsRegistryHandler, error) {
-	pubKeyConverter, err := pubkeyConverter.NewBech32PubkeyConverter(cfg.AddressPubkeyConverter.Length, addressHRP)
+	pubKeyConverter, err := pubkeyConverter.NewBech32PubkeyConverter(cfg.AddressPubkeyConverter.Length, addressHrp)
 	if err != nil {
 		return nil, err
 	}
