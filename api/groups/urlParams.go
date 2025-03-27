@@ -1,7 +1,6 @@
 package groups
 
 import (
-	"bytes"
 	"encoding/hex"
 	"strconv"
 
@@ -10,9 +9,6 @@ import (
 
 	"github.com/multiversx/mx-chain-proxy-go/common"
 )
-
-// SystemAccountAddress is the const for the system account address
-var SystemAccountAddress = bytes.Repeat([]byte{255}, 32)
 
 func parseBlockQueryOptions(c *gin.Context) (common.BlockQueryOptions, error) {
 	withTxs, err := parseBoolUrlParam(c, common.UrlParameterWithTransactions)
@@ -97,18 +93,9 @@ func parseAccountQueryOptions(c *gin.Context, address string) (common.AccountQue
 		return common.AccountQueryOptions{}, err
 	}
 
-	shardID, err := parseUint32UrlParam(c, common.UrlParameterForcedShardID)
-	if err != nil {
-		return common.AccountQueryOptions{}, err
-	}
-
 	withKeys, err := parseBoolUrlParam(c, common.UrlParameterWithKeys)
 	if err != nil {
 		return common.AccountQueryOptions{}, err
-	}
-
-	if shardID.HasValue && address != SystemAccountAddressBech {
-		return common.AccountQueryOptions{}, ErrForcedShardIDCannotBeProvided
 	}
 
 	options := common.AccountQueryOptions{
@@ -118,7 +105,6 @@ func parseAccountQueryOptions(c *gin.Context, address string) (common.AccountQue
 		BlockHash:      blockHash,
 		BlockRootHash:  blockRootHash,
 		HintEpoch:      hintEpoch,
-		ForcedShardID:  shardID,
 		WithKeys:       withKeys,
 	}
 
