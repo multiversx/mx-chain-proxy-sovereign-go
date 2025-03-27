@@ -38,9 +38,9 @@ type TypeConfig struct {
 
 // PubkeyConfig will map the public key configuration
 type PubkeyConfig struct {
-	Length          int
-	Type            string
-	SignatureLength int
+	Length int
+	Type   string
+	Hrp    string
 }
 
 // ApiLoggingConfig holds the configuration related to API requests logging

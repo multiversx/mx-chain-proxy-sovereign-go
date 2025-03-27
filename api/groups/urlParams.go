@@ -1,16 +1,18 @@
 package groups
 
 import (
+	"bytes"
 	"encoding/hex"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/multiversx/mx-chain-core-go/core"
+
 	"github.com/multiversx/mx-chain-proxy-go/common"
 )
 
-// SystemAccountAddressBech is the const for the system account address
-const SystemAccountAddressBech = "erd1lllllllllllllllllllllllllllllllllllllllllllllllllllsckry7t"
+// SystemAccountAddress is the const for the system account address
+var SystemAccountAddress = bytes.Repeat([]byte{255}, 32)
 
 func parseBlockQueryOptions(c *gin.Context) (common.BlockQueryOptions, error) {
 	withTxs, err := parseBoolUrlParam(c, common.UrlParameterWithTransactions)
