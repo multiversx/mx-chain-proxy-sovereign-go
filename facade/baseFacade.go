@@ -7,6 +7,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/data/transaction"
 	"github.com/multiversx/mx-chain-core-go/data/vm"
+
 	"github.com/multiversx/mx-chain-proxy-go/api/groups"
 	"github.com/multiversx/mx-chain-proxy-go/common"
 	"github.com/multiversx/mx-chain-proxy-go/data"
@@ -416,8 +417,8 @@ func (epf *ProxyFacade) AuctionList() ([]*data.AuctionListValidatorAPIResponse, 
 }
 
 // GetAddressConverter returns the address converter
-func (pf *ProxyFacade) GetAddressConverter() (core.PubkeyConverter, error) {
-	return pf.pubKeyConverter, nil
+func (pf *ProxyFacade) GetAddressConverter() core.PubkeyConverter {
+	return pf.pubKeyConverter
 }
 
 // GetLatestFullySynchronizedHyperblockNonce returns the latest fully synchronized hyperblock nonce

@@ -11,12 +11,14 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/core/check"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/multiversx/mx-chain-proxy-go/api/groups"
 	"github.com/multiversx/mx-chain-proxy-go/api/mock"
 	"github.com/multiversx/mx-chain-proxy-go/common"
 	"github.com/multiversx/mx-chain-proxy-go/data"
-	"github.com/stretchr/testify/assert"
 )
 
 func startApiServerResponseLogger(handler groups.AccountsFacadeHandler, respLogMiddleware *responseLoggerMiddleware) *gin.Engine {
@@ -62,6 +64,9 @@ func TestResponseLoggerMiddleware_DurationExceedsTimeout(t *testing.T) {
 				},
 			}, nil
 		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
+		},
 	}
 
 	rlf := responseLogFields{}
@@ -100,6 +105,9 @@ func TestResponseLoggerMiddleware_InternalError(t *testing.T) {
 	facade := mock.FacadeStub{
 		GetAccountHandler: func(_ string, _ common.AccountQueryOptions) (*data.AccountModel, error) {
 			return nil, expectedErr
+		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
 		},
 	}
 
@@ -142,6 +150,9 @@ func TestResponseLoggerMiddleware_ShouldNotCallHandler(t *testing.T) {
 					Balance: "5555",
 				},
 			}, nil
+		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
 		},
 	}
 

@@ -8,14 +8,19 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/core/check"
+	"github.com/multiversx/mx-chain-core-go/core/pubkeyConverter"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	"github.com/multiversx/mx-chain-proxy-go/api/groups"
 	"github.com/multiversx/mx-chain-proxy-go/api/mock"
 	"github.com/multiversx/mx-chain-proxy-go/common"
 	"github.com/multiversx/mx-chain-proxy-go/data"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
+
+var pubKeyConv, _ = pubkeyConverter.NewBech32PubkeyConverter(32, "erd")
 
 func TestNewRateLimiter_NilLimitsMapShouldErr(t *testing.T) {
 	t.Parallel()
@@ -48,6 +53,9 @@ func TestRateLimiter_IpRestrictionRaisedAndErased(t *testing.T) {
 					Balance: "100",
 				},
 			}, nil
+		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
 		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
@@ -93,6 +101,9 @@ func TestRateLimiter_EndpointNotLimitedShouldNotRaiseRestrictions(t *testing.T) 
 					Balance: "100",
 				},
 			}, nil
+		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
 		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)

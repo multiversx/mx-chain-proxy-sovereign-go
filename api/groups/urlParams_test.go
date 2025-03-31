@@ -8,9 +8,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/multiversx/mx-chain-core-go/core"
-	"github.com/multiversx/mx-chain-proxy-go/common"
+	"github.com/multiversx/mx-chain-core-go/core/pubkeyConverter"
 	"github.com/stretchr/testify/require"
+
+	"github.com/multiversx/mx-chain-proxy-go/api/mock"
+	"github.com/multiversx/mx-chain-proxy-go/common"
 )
+
+var pubKeyConv, _ = pubkeyConverter.NewBech32PubkeyConverter(32, "erd")
 
 func TestParseBlockQueryOptions(t *testing.T) {
 	t.Parallel()
@@ -37,7 +42,13 @@ func TestParseAccountOptions(t *testing.T) {
 			HasValue: true,
 		},
 	}
-	options, err := parseAccountQueryOptions(createDummyGinContextWithQuery("hintEpoch=3737"), "")
+	facade := &mock.FacadeStub{
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
+		},
+	}
+	addressGroup, _ := NewAccountsGroup(facade)
+	options, err := addressGroup.parseAccountQueryOptions(createDummyGinContextWithQuery("hintEpoch=3737"), "")
 	require.Nil(t, err)
 	require.Equal(t, expectedOptions, options)
 }
@@ -127,15 +138,21 @@ func TestParseHyperblockQueryOptions(t *testing.T) {
 }
 
 func TestParseAccountQueryOptions(t *testing.T) {
-	options, err := parseAccountQueryOptions(createDummyGinContextWithQuery("onFinalBlock=true"), "")
+	facade := &mock.FacadeStub{
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
+		},
+	}
+	addressGroup, _ := NewAccountsGroup(facade)
+	options, err := addressGroup.parseAccountQueryOptions(createDummyGinContextWithQuery("onFinalBlock=true"), "")
 	require.Nil(t, err)
 	require.Equal(t, common.AccountQueryOptions{OnFinalBlock: true}, options)
 
-	options, err = parseAccountQueryOptions(createDummyGinContextWithQuery(""), "")
+	options, err = addressGroup.parseAccountQueryOptions(createDummyGinContextWithQuery(""), "")
 	require.Nil(t, err)
 	require.Empty(t, options)
 
-	options, err = parseAccountQueryOptions(createDummyGinContextWithQuery("onFinalBlock=foobar"), "")
+	options, err = addressGroup.parseAccountQueryOptions(createDummyGinContextWithQuery("onFinalBlock=foobar"), "")
 	require.NotNil(t, err)
 	require.Empty(t, options)
 }

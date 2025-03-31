@@ -3,8 +3,10 @@ package groups
 import (
 	"math/big"
 
+	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/data/transaction"
 	"github.com/multiversx/mx-chain-core-go/data/vm"
+
 	"github.com/multiversx/mx-chain-proxy-go/common"
 	"github.com/multiversx/mx-chain-proxy-go/data"
 )
@@ -25,6 +27,7 @@ type AccountsFacadeHandler interface {
 	GetNFTTokenIDsRegisteredByAddress(address string, options common.AccountQueryOptions) (*data.GenericAPIResponse, error)
 	GetGuardianData(address string, options common.AccountQueryOptions) (*data.GenericAPIResponse, error)
 	IsDataTrieMigrated(address string, options common.AccountQueryOptions) (*data.GenericAPIResponse, error)
+	GetAddressConverter() core.PubkeyConverter
 }
 
 // BlockFacadeHandler interface defines methods that can be used from the facade

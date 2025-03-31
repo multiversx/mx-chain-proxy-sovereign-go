@@ -62,7 +62,7 @@ func parseHyperblockQueryOptions(c *gin.Context) (common.HyperblockQueryOptions,
 	}, nil
 }
 
-func parseAccountQueryOptions(c *gin.Context, address string) (common.AccountQueryOptions, error) {
+func (group *accountsGroup) parseAccountQueryOptions(c *gin.Context, address string) (common.AccountQueryOptions, error) {
 	onFinalBlock, err := parseBoolUrlParam(c, common.UrlParameterOnFinalBlock)
 	if err != nil {
 		return common.AccountQueryOptions{}, err
@@ -93,9 +93,18 @@ func parseAccountQueryOptions(c *gin.Context, address string) (common.AccountQue
 		return common.AccountQueryOptions{}, err
 	}
 
+	shardID, err := parseUint32UrlParam(c, common.UrlParameterForcedShardID)
+	if err != nil {
+		return common.AccountQueryOptions{}, err
+	}
+
 	withKeys, err := parseBoolUrlParam(c, common.UrlParameterWithKeys)
 	if err != nil {
 		return common.AccountQueryOptions{}, err
+	}
+
+	if shardID.HasValue && address != group.systemAccountAddressBech32 {
+		return common.AccountQueryOptions{}, ErrForcedShardIDCannotBeProvided
 	}
 
 	options := common.AccountQueryOptions{
@@ -105,6 +114,7 @@ func parseAccountQueryOptions(c *gin.Context, address string) (common.AccountQue
 		BlockHash:      blockHash,
 		BlockRootHash:  blockRootHash,
 		HintEpoch:      hintEpoch,
+		ForcedShardID:  shardID,
 		WithKeys:       withKeys,
 	}
 
