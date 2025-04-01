@@ -27,7 +27,11 @@ func NewAccountsGroup(facadeHandler data.FacadeHandler) (*accountsGroup, error) 
 		return nil, ErrWrongTypeAssertion
 	}
 
-	sysAccAddrBech32, _ := facade.GetAddressConverter().Encode(systemAccountAddress)
+	sysAccAddrBech32, err := facade.GetAddressConverter().Encode(systemAccountAddress)
+	if err != nil {
+		return nil, err
+	}
+
 	ag := &accountsGroup{
 		facade:                     facade,
 		baseGroup:                  &baseGroup{},
