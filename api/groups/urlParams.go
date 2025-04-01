@@ -6,11 +6,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/multiversx/mx-chain-core-go/core"
+
 	"github.com/multiversx/mx-chain-proxy-go/common"
 )
-
-// SystemAccountAddressBech is the const for the system account address
-const SystemAccountAddressBech = "erd1lllllllllllllllllllllllllllllllllllllllllllllllllllsckry7t"
 
 func parseBlockQueryOptions(c *gin.Context) (common.BlockQueryOptions, error) {
 	withTxs, err := parseBoolUrlParam(c, common.UrlParameterWithTransactions)
@@ -64,7 +62,7 @@ func parseHyperblockQueryOptions(c *gin.Context) (common.HyperblockQueryOptions,
 	}, nil
 }
 
-func parseAccountQueryOptions(c *gin.Context, address string) (common.AccountQueryOptions, error) {
+func (group *accountsGroup) parseAccountQueryOptions(c *gin.Context, address string) (common.AccountQueryOptions, error) {
 	onFinalBlock, err := parseBoolUrlParam(c, common.UrlParameterOnFinalBlock)
 	if err != nil {
 		return common.AccountQueryOptions{}, err
@@ -105,7 +103,7 @@ func parseAccountQueryOptions(c *gin.Context, address string) (common.AccountQue
 		return common.AccountQueryOptions{}, err
 	}
 
-	if shardID.HasValue && address != SystemAccountAddressBech {
+	if shardID.HasValue && address != group.systemAccountAddressBech32 {
 		return common.AccountQueryOptions{}, ErrForcedShardIDCannotBeProvided
 	}
 

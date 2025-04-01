@@ -10,13 +10,16 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/core/pubkeyConverter"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	apiErrors "github.com/multiversx/mx-chain-proxy-go/api/errors"
 	"github.com/multiversx/mx-chain-proxy-go/api/groups"
 	"github.com/multiversx/mx-chain-proxy-go/api/mock"
 	"github.com/multiversx/mx-chain-proxy-go/common"
 	"github.com/multiversx/mx-chain-proxy-go/data"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 const addressPath = "/address"
@@ -169,6 +172,8 @@ type nonceResponse struct {
 	Data nonceResponseData
 }
 
+var pubKeyConv, _ = pubkeyConverter.NewBech32PubkeyConverter(32, "erd")
+
 func TestNewAccountGroup_WrongFacadeShouldErr(t *testing.T) {
 	wrongFacade := &mock.WrongFacade{}
 	group, err := groups.NewAccountsGroup(wrongFacade)
@@ -179,7 +184,11 @@ func TestNewAccountGroup_WrongFacadeShouldErr(t *testing.T) {
 func TestAddressRoute_EmptyTrailReturns404(t *testing.T) {
 	t.Parallel()
 
-	facade := &mock.FacadeStub{}
+	facade := &mock.FacadeStub{
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
+		},
+	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
 	require.NoError(t, err)
 	ws := startProxyServer(addressGroup, addressPath)
@@ -200,6 +209,9 @@ func TestGetAccount_FailWhenFacadeGetAccountFails(t *testing.T) {
 	facade := &mock.FacadeStub{
 		GetAccountHandler: func(address string, _ common.AccountQueryOptions) (*data.AccountModel, error) {
 			return nil, errors.New(returnedError)
+		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
 		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
@@ -231,6 +243,9 @@ func TestGetAccount_ReturnsSuccessfully(t *testing.T) {
 				},
 			}, nil
 		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
+		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
 	require.NoError(t, err)
@@ -256,7 +271,11 @@ func TestGetAccount_ReturnsSuccessfully(t *testing.T) {
 func TestGetAccount_FailsWhenInvalidRequest(t *testing.T) {
 	t.Parallel()
 
-	facade := &mock.FacadeStub{}
+	facade := &mock.FacadeStub{
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
+		},
+	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
 	require.NoError(t, err)
 	ws := startProxyServer(addressGroup, addressPath)
@@ -280,6 +299,9 @@ func TestGetAccount_FailWhenFacadeGetAccountsFails(t *testing.T) {
 	facade := &mock.FacadeStub{
 		GetAccountsHandler: func(addresses []string, _ common.AccountQueryOptions) (*data.AccountsModel, error) {
 			return nil, errors.New(returnedError)
+		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
 		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
@@ -319,6 +341,9 @@ func TestGetAccounts_ReturnsSuccessfully(t *testing.T) {
 				Accounts: accounts,
 			}, nil
 		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
+		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
 	require.NoError(t, err)
@@ -353,6 +378,9 @@ func TestGetBalance_ReturnsSuccessfully(t *testing.T) {
 					Balance: "100",
 				},
 			}, nil
+		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
 		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
@@ -389,6 +417,9 @@ func TestGetUsername_ReturnsSuccessfully(t *testing.T) {
 				},
 			}, nil
 		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
+		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
 	require.NoError(t, err)
@@ -422,6 +453,9 @@ func TestGetNonce_ReturnsSuccessfully(t *testing.T) {
 				},
 			}, nil
 		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
+		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
 	require.NoError(t, err)
@@ -450,6 +484,9 @@ func TestGetShard_FailWhenFacadeErrors(t *testing.T) {
 		GetShardIDForAddressHandler: func(_ string) (uint32, error) {
 			return 0, expectedErr
 		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
+		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
 	require.NoError(t, err)
@@ -474,6 +511,9 @@ func TestGetShard_ReturnsSuccessfully(t *testing.T) {
 	facade := &mock.FacadeStub{
 		GetShardIDForAddressHandler: func(_ string) (uint32, error) {
 			return expectedShardID, nil
+		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
 		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
@@ -503,6 +543,9 @@ func TestGetESDTTokens_FailsWhenFacadeErrors(t *testing.T) {
 		GetAllESDTTokensCalled: func(_ string, _ common.AccountQueryOptions) (*data.GenericAPIResponse, error) {
 			return nil, expectedErr
 		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
+		},
 	}
 
 	addressGroup, err := groups.NewAccountsGroup(facade)
@@ -528,6 +571,9 @@ func TestGetESDTTokens_ReturnsSuccessfully(t *testing.T) {
 	facade := &mock.FacadeStub{
 		GetAllESDTTokensCalled: func(_ string, _ common.AccountQueryOptions) (*data.GenericAPIResponse, error) {
 			return &data.GenericAPIResponse{Data: getEsdtTokensResponseData{Tokens: expectedTokens}}, nil
+		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
 		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
@@ -568,6 +614,9 @@ func TestGetGuardianData(t *testing.T) {
 			GetGuardianDataCalled: func(address string, options common.AccountQueryOptions) (*data.GenericAPIResponse, error) {
 				return nil, expectedErr
 			},
+			GetAddressConverterCalled: func() core.PubkeyConverter {
+				return pubKeyConv
+			},
 		}
 		addressGroup, err := groups.NewAccountsGroup(facade)
 		require.NoError(t, err)
@@ -589,6 +638,9 @@ func TestGetGuardianData(t *testing.T) {
 				return &data.GenericAPIResponse{
 					Data: expectedGuardianData,
 				}, nil
+			},
+			GetAddressConverterCalled: func() core.PubkeyConverter {
+				return pubKeyConv
 			},
 		}
 
@@ -617,6 +669,9 @@ func TestGetESDTsRoles_FailsWhenFacadeErrors(t *testing.T) {
 	facade := &mock.FacadeStub{
 		GetESDTsRolesCalled: func(_ string, _ common.AccountQueryOptions) (*data.GenericAPIResponse, error) {
 			return nil, expectedErr
+		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
 		},
 	}
 
@@ -647,6 +702,9 @@ func TestGetESDTsRoles_ReturnsSuccessfully(t *testing.T) {
 		GetESDTsRolesCalled: func(_ string, _ common.AccountQueryOptions) (*data.GenericAPIResponse, error) {
 			return &data.GenericAPIResponse{Data: getESDTsRolesResponseData{Roles: expectedRoles}}, nil
 		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
+		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
 	require.NoError(t, err)
@@ -674,6 +732,9 @@ func TestGetESDTTokenData_FailWhenFacadeErrors(t *testing.T) {
 	facade := &mock.FacadeStub{
 		GetESDTTokenDataCalled: func(_ string, _ string, _ common.AccountQueryOptions) (*data.GenericAPIResponse, error) {
 			return nil, expectedErr
+		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
 		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
@@ -704,6 +765,9 @@ func TestGetESDTTokenData_ReturnsSuccessfully(t *testing.T) {
 		GetESDTTokenDataCalled: func(_ string, _ string, _ common.AccountQueryOptions) (*data.GenericAPIResponse, error) {
 			return &data.GenericAPIResponse{Data: getEsdtTokenDataResponseData{TokenData: expectedTokenData}}, nil
 		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
+		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
 	require.NoError(t, err)
@@ -732,6 +796,9 @@ func TestGetESDTNftTokenData_FailWhenFacadeErrors(t *testing.T) {
 		GetESDTNftTokenDataCalled: func(_ string, _ string, _ uint64, _ common.AccountQueryOptions) (*data.GenericAPIResponse, error) {
 			return nil, expectedErr
 		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
+		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
 	require.NoError(t, err)
@@ -752,7 +819,11 @@ func TestGetESDTNftTokenData_FailWhenFacadeErrors(t *testing.T) {
 func TestGetESDTNftTokenData_FailWhenNonceParamIsInvalid(t *testing.T) {
 	t.Parallel()
 
-	facade := &mock.FacadeStub{}
+	facade := &mock.FacadeStub{
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
+		},
+	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
 	require.NoError(t, err)
 	ws := startProxyServer(addressGroup, addressPath)
@@ -782,6 +853,9 @@ func TestGetESDTNftTokenData_ReturnsSuccessfully(t *testing.T) {
 		GetESDTNftTokenDataCalled: func(_ string, _ string, _ uint64, _ common.AccountQueryOptions) (*data.GenericAPIResponse, error) {
 			return &data.GenericAPIResponse{Data: getEsdtNftTokenDataResponseData{TokenData: expectedTokenData}}, nil
 		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
+		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
 	require.NoError(t, err)
@@ -810,6 +884,9 @@ func TestGetESDTsWithRole_FailWhenFacadeErrors(t *testing.T) {
 		GetESDTsWithRoleCalled: func(_ string, _ string, _ common.AccountQueryOptions) (*data.GenericAPIResponse, error) {
 			return nil, expectedErr
 		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
+		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
 	require.NoError(t, err)
@@ -834,6 +911,9 @@ func TestGetESDTsWithRole_ReturnsSuccessfully(t *testing.T) {
 	facade := &mock.FacadeStub{
 		GetESDTsWithRoleCalled: func(_ string, _ string, _ common.AccountQueryOptions) (*data.GenericAPIResponse, error) {
 			return &data.GenericAPIResponse{Data: getEsdtsWithRoleResponseData{Tokens: expectedTokens}}, nil
+		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
 		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
@@ -863,6 +943,9 @@ func TestGetNFTTokenIDsRegisteredByAddress_FailWhenFacadeErrors(t *testing.T) {
 		GetNFTTokenIDsRegisteredByAddressCalled: func(_ string, _ common.AccountQueryOptions) (*data.GenericAPIResponse, error) {
 			return nil, expectedErr
 		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
+		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
 	require.NoError(t, err)
@@ -887,6 +970,9 @@ func TestGetNFTTokenIDsRegisteredByAddress_ReturnsSuccessfully(t *testing.T) {
 	facade := &mock.FacadeStub{
 		GetNFTTokenIDsRegisteredByAddressCalled: func(_ string, _ common.AccountQueryOptions) (*data.GenericAPIResponse, error) {
 			return &data.GenericAPIResponse{Data: getEsdtsWithRoleResponseData{Tokens: expectedTokens}}, nil
+		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
 		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
@@ -915,6 +1001,9 @@ func TestGetKeyValuePairs_FailWhenFacadeErrors(t *testing.T) {
 	facade := &mock.FacadeStub{
 		GetKeyValuePairsHandler: func(_ string, _ common.AccountQueryOptions) (*data.GenericAPIResponse, error) {
 			return nil, expectedErr
+		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
 		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
@@ -948,6 +1037,9 @@ func TestGetKeyValuePairs_ReturnsSuccessfully(t *testing.T) {
 		GetKeyValuePairsHandler: func(_ string, _ common.AccountQueryOptions) (*data.GenericAPIResponse, error) {
 			return expectedResponse, nil
 		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
+		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
 	require.NoError(t, err)
@@ -975,6 +1067,9 @@ func TestGetCodeHash_FailWhenFacadeErrors(t *testing.T) {
 	facade := &mock.FacadeStub{
 		GetCodeHashCalled: func(_ string, _ common.AccountQueryOptions) (*data.GenericAPIResponse, error) {
 			return nil, expectedErr
+		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
 		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
@@ -1005,6 +1100,9 @@ func TestGetCodeHash_ReturnsSuccessfully(t *testing.T) {
 		GetCodeHashCalled: func(_ string, _ common.AccountQueryOptions) (*data.GenericAPIResponse, error) {
 			return expectedResponse, nil
 		},
+		GetAddressConverterCalled: func() core.PubkeyConverter {
+			return pubKeyConv
+		},
 	}
 	addressGroup, err := groups.NewAccountsGroup(facade)
 	require.NoError(t, err)
@@ -1033,6 +1131,9 @@ func TestAccountsGroup_IsDataTrieMigrated(t *testing.T) {
 		facade := &mock.FacadeStub{
 			IsDataTrieMigratedCalled: func(_ string, _ common.AccountQueryOptions) (*data.GenericAPIResponse, error) {
 				return nil, expectedErr
+			},
+			GetAddressConverterCalled: func() core.PubkeyConverter {
+				return pubKeyConv
 			},
 		}
 		addressGroup, err := groups.NewAccountsGroup(facade)
@@ -1064,6 +1165,9 @@ func TestAccountsGroup_IsDataTrieMigrated(t *testing.T) {
 		facade := &mock.FacadeStub{
 			IsDataTrieMigratedCalled: func(_ string, _ common.AccountQueryOptions) (*data.GenericAPIResponse, error) {
 				return expectedResponse, nil
+			},
+			GetAddressConverterCalled: func() core.PubkeyConverter {
+				return pubKeyConv
 			},
 		}
 		addressGroup, err := groups.NewAccountsGroup(facade)

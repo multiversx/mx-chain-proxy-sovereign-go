@@ -6,6 +6,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/data/transaction"
 	"github.com/multiversx/mx-chain-core-go/data/vm"
+
 	"github.com/multiversx/mx-chain-proxy-go/common"
 	"github.com/multiversx/mx-chain-proxy-go/data"
 )
@@ -83,6 +84,7 @@ type FacadeStub struct {
 	GetGuardianDataCalled                        func(address string, options common.AccountQueryOptions) (*data.GenericAPIResponse, error)
 	IsDataTrieMigratedCalled                     func(address string, options common.AccountQueryOptions) (*data.GenericAPIResponse, error)
 	GetWaitingEpochsLeftForPublicKeyCalled       func(publicKey string) (*data.WaitingEpochsLeftApiResponse, error)
+	GetAddressConverterCalled                    func() core.PubkeyConverter
 }
 
 // GetProof -
@@ -403,8 +405,8 @@ func (f *FacadeStub) SimulateTransaction(tx *data.Transaction, checkSignature bo
 }
 
 // GetAddressConverter -
-func (f *FacadeStub) GetAddressConverter() (core.PubkeyConverter, error) {
-	return nil, nil
+func (f *FacadeStub) GetAddressConverter() core.PubkeyConverter {
+	return f.GetAddressConverterCalled()
 }
 
 // SendMultipleTransactions -

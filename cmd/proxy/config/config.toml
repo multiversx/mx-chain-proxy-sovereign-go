@@ -52,6 +52,9 @@
    # Type specifies the type of public keys: hex or bech32
    Type = "bech32"
 
+   # Hrp human-readable prefix for address
+   Hrp = "erd"
+
 [Marshalizer]
    Type = "gogo protobuf"
 
