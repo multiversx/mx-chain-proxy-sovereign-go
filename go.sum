@@ -131,12 +131,12 @@ github.com/modern-go/reflect2 v1.0.2 h1:xBagoLtFs94CBntxluKeaWgTMpvLxC4ur3nMaC9G
 github.com/modern-go/reflect2 v1.0.2/go.mod h1:yWuevngMOJpCy52FWWMvUC8ws7m/LJsjYzDa0/r8luk=
 github.com/mr-tron/base58 v1.2.0 h1:T/HDJBh4ZCPbU39/+c3rRvE0uKBQlU27+QI8LJ4t64o=
 github.com/mr-tron/base58 v1.2.0/go.mod h1:BinMc/sQntlIE1frQmRFPUoPA1Zkr8VRgBdjWI2mNwc=
-github.com/multiversx/mx-chain-core-sovereign-go v1.0.0-sov h1:qeg50CJ15g3WVOpy1+hBYdHcWF79Jp+lABdKG34b9Js=
-github.com/multiversx/mx-chain-core-sovereign-go v1.0.0-sov/go.mod h1:P/YBoFnt25XUaCQ7Q/SD15vhnc9yV5JDhHxyFO9P8Z0=
+github.com/multiversx/mx-chain-core-sovereign-go v1.2.25-0.20250408132734-79aa4c1dd15e h1:d339BunhiACeheWt7UAXU3TFima5CWZkSIocqXuYSzQ=
+github.com/multiversx/mx-chain-core-sovereign-go v1.2.25-0.20250408132734-79aa4c1dd15e/go.mod h1:P/YBoFnt25XUaCQ7Q/SD15vhnc9yV5JDhHxyFO9P8Z0=
 github.com/multiversx/mx-chain-crypto-go v1.2.12 h1:zWip7rpUS4CGthJxfKn5MZfMfYPjVjIiCID6uX5BSOk=
 github.com/multiversx/mx-chain-crypto-go v1.2.12/go.mod h1:HzcPpCm1zanNct/6h2rIh+MFrlXbjA5C8+uMyXj3LI4=
-github.com/multiversx/mx-chain-es-indexer-sovereign-go v1.0.0-sov h1:+lT2q54cwkWWyynqbgII3/24y0P9P955gnqDnfofld0=
-github.com/multiversx/mx-chain-es-indexer-sovereign-go v1.0.0-sov/go.mod h1:dQwaDjObcxpZO+HVGL0OrStEnxTqQRoz99NekYLTk+k=
+github.com/multiversx/mx-chain-es-indexer-sovereign-go v1.7.17-0.20250605071839-35356a343546 h1:Aem6nOm6oey8x4Rcs+TKKeTmRlWu9bu8JK+0zO5Yosk=
+github.com/multiversx/mx-chain-es-indexer-sovereign-go v1.7.17-0.20250605071839-35356a343546/go.mod h1:1dWI1EUSRZDClBCSAAgvaOjaLb1ikVbdFniNdLI+pOs=
 github.com/multiversx/mx-chain-logger-go v1.0.15 h1:HlNdK8etyJyL9NQ+6mIXyKPEBo+wRqOwi3n+m2QIHXc=
 github.com/multiversx/mx-chain-logger-go v1.0.15/go.mod h1:t3PRKaWB1M+i6gUfD27KXgzLJJC+mAQiN+FLlL1yoGQ=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
