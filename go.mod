@@ -1,8 +1,8 @@
 module github.com/multiversx/mx-chain-proxy-go
 
 replace (
-	github.com/multiversx/mx-chain-core-go => github.com/multiversx/mx-chain-core-sovereign-go v1.2.25-0.20250521135959-7db9d641a703
-	github.com/multiversx/mx-chain-es-indexer-go => github.com/multiversx/mx-chain-es-indexer-sovereign-go v1.7.17-0.20250610105538-c2d0e40a2887
+	github.com/multiversx/mx-chain-core-go => github.com/multiversx/mx-chain-core-sovereign-go v1.2.25-0.20250715130233-f0b1f811a63c
+	github.com/multiversx/mx-chain-es-indexer-go => github.com/multiversx/mx-chain-es-indexer-sovereign-go v1.7.17-0.20250715151725-0c18a314d0ea
 )
 
 go 1.23.0
@@ -12,10 +12,10 @@ require (
 	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-contrib/static v0.0.1
 	github.com/gin-gonic/gin v1.10.0
-	github.com/multiversx/mx-chain-core-go v1.3.2-0.20250520074139-18b645ad397a
+	github.com/multiversx/mx-chain-core-go v1.4.0
 	github.com/multiversx/mx-chain-crypto-go v1.2.13-0.20250218161752-9482d9a22234
 	github.com/multiversx/mx-chain-es-indexer-go v1.7.17-0.20250218165903-7923d170f8f0
-	github.com/multiversx/mx-chain-logger-go v1.0.16-0.20250520074859-b2faf3c90273
+	github.com/multiversx/mx-chain-logger-go v1.1.0
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.10.0
 	github.com/urfave/cli v1.22.16
